@@ -1,0 +1,59 @@
+DROP DATABASE IF EXIST db_farmacia;
+
+CREATE DATABASE db_farmacia;
+
+Use db_farmacia;
+
+CREATE TABLE usuario(
+    id BIGSERIAL PRIMARY KEY,
+    username VARCHAR(50) NOT NULL UNIQUE,
+    password VARCHAR(50) NOT NULL,
+    fecha_creacion TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE categoria(
+    id BIGSERIAL PRIMARY KEY,
+    nombre VARCHAR(50) NOT NULL UNIQUE,
+    fecha_creacion TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE medicina(
+    id BIGSERIAL PRIMARY KEY,
+    nombre VARCHAR(50) NOT NULL UNIQUE,
+    descripcion VARCHAR(50) NOT NULL,
+    precio DECIMAL(12,2) NOT NULL,
+    stock INTEGER NOT NULL,
+    unidades_caja INTEGER NOT NULL,
+    categoria_id BIGINT NOT NULL REFERENCES categoria(id),
+    fecha_creacion TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE cliente(
+    id BIGSERIAL PRIMARY KEY,
+    cedula VARCHAR(50) NOT NULL UNIQUE,
+    nombre VARCHAR(150) NOT NULL UNIQUE,
+    direccion VARCHAR(150) NOT NULL,
+    celular VARCHAR(50) NOT NULL,
+    fecha_creacion TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+
+CREATE TABLE compra_temp(
+    id BIGSERIAL PRIMARY KEY,
+    cantidad INTEGER NOT NULL,
+    fecha_creacion TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE medicina_comprada(
+    id BIGSERIAL PRIMARY KEY,
+    medicina_id BIGINT NOT NULL REFERENCES medicina(id),
+    compra_temp_id BIGINT NOT NULL REFERENCES compra_temp(id),
+    fecha_creacion TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE orden(
+    id BIGSERIAL PRIMARY KEY,
+    compra_id BIGINT NOT NULL REFERENCES compra_temp(id),
+    cliente_id BIGINT NOT NULL REFERENCES cliente(id),
+    fecha_creacion TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
